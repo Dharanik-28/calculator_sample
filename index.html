@@ -1,0 +1,1229 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>CalcNova | Master 3D Calculator</title>
+
+    <style>
+
+        /* =========================
+           BASIC CSS
+        ========================= */
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        :root {
+            --gold: #ffc21a;
+            --gold2: #ffe36d;
+            --dark: #050505;
+            --card: #111;
+            --muted: #9c9c9c;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #050505;
+            color: white;
+            overflow-x: hidden;
+        }
+
+
+        /* =========================
+           LOGIN PAGE
+        ========================= */
+
+        .login {
+            position: fixed;
+            inset: 0;
+            z-index: 1000;
+
+            display: grid;
+            place-items: center;
+
+            background:
+                radial-gradient(
+                    circle at 50% 40%,
+                    rgba(255, 194, 26, .18),
+                    transparent 28%
+                ),
+                #030303;
+        }
+
+        .login-card {
+            width: 400px;
+            padding: 35px;
+
+            background: #111;
+            border: 1px solid rgba(255, 194, 26, .3);
+            border-radius: 25px;
+
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 32px;
+            font-weight: bold;
+        }
+
+        .logo span {
+            color: var(--gold);
+        }
+
+        .field {
+            width: 100%;
+            padding: 14px;
+            margin: 7px 0;
+
+            background: #080808;
+            color: white;
+
+            border: 1px solid #333;
+            border-radius: 12px;
+        }
+
+        .gold-btn {
+            width: 100%;
+            padding: 14px;
+
+            background: var(--gold);
+            color: #111;
+
+            border: none;
+            border-radius: 12px;
+
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+
+        /* =========================
+           NAVIGATION
+        ========================= */
+
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+
+            height: 72px;
+            z-index: 50;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            padding: 0 5%;
+
+            background: rgba(3, 3, 3, .8);
+            backdrop-filter: blur(15px);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 25px;
+        }
+
+        .nav-links a {
+            color: #ccc;
+            text-decoration: none;
+        }
+
+        .nav-links a:hover {
+            color: var(--gold);
+        }
+
+
+        /* =========================
+           HERO SECTION
+        ========================= */
+
+        .hero {
+            min-height: 100vh;
+
+            padding: 100px 5% 50px;
+
+            display: grid;
+            grid-template-columns: 360px 1fr;
+            align-items: center;
+
+            background:
+                radial-gradient(
+                    circle at 72% 48%,
+                    rgba(255, 194, 26, .14),
+                    transparent 28%
+                ),
+                #050505;
+        }
+
+        .eyebrow {
+            color: var(--gold2);
+            font-size: 12px;
+            letter-spacing: 4px;
+            font-weight: bold;
+        }
+
+        .hero h1 {
+            font-size: 80px;
+            line-height: .9;
+            margin: 15px 0;
+        }
+
+        .hero h1 span {
+            color: var(--gold);
+        }
+
+        .hero p {
+            color: #999;
+            line-height: 1.7;
+        }
+
+
+        /* =========================
+           3D CALCULATOR
+        ========================= */
+
+        .calculator-scene {
+            height: 650px;
+
+            display: grid;
+            place-items: center;
+
+            perspective: 1500px;
+        }
+
+        .calc-wrap {
+            width: 300px;
+            height: 510px;
+
+            position: relative;
+
+            transform-style: preserve-3d;
+
+            cursor: grab;
+        }
+
+        .calc-face {
+            position: absolute;
+            inset: 0;
+
+            padding: 19px;
+
+            border-radius: 28px;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    #343434,
+                    #171717,
+                    #070707
+                );
+
+            border: 2px solid #555;
+
+            box-shadow:
+                inset 4px 4px 8px rgba(255,255,255,.1),
+                0 30px 55px rgba(0,0,0,.8);
+
+            transform: translateZ(22px);
+        }
+
+
+        /* Calculator Screen */
+
+        .screen {
+            height: 94px;
+
+            display: flex;
+            align-items: flex-end;
+            justify-content: flex-end;
+
+            padding: 13px;
+
+            background: #020202;
+
+            border: 2px solid #222;
+            border-radius: 16px;
+
+            overflow: hidden;
+        }
+
+        .screen-value {
+            font-size: 34px;
+            color: #d9e8ff;
+
+            white-space: nowrap;
+        }
+
+
+        /* Calculator Buttons */
+
+        .key-grid {
+            display: grid;
+
+            grid-template-columns:
+                repeat(4, 1fr);
+
+            gap: 9px;
+
+            margin-top: 14px;
+        }
+
+        .key {
+            height: 62px;
+
+            border: none;
+            border-radius: 14px;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    #3a3a3a,
+                    #171717
+                );
+
+            color: white;
+
+            font-size: 16px;
+            font-weight: bold;
+
+            cursor: pointer;
+
+            box-shadow:
+                0 6px 0 #050505;
+        }
+
+        .key:hover {
+            filter: brightness(1.2);
+        }
+
+        .key:active {
+            transform: translateY(4px);
+        }
+
+        .key.op,
+        .key.equal {
+            background:
+                linear-gradient(
+                    145deg,
+                    #ffe05b,
+                    #e8a900
+                );
+
+            color: #111;
+        }
+
+        .key.wide {
+            grid-column: span 2;
+        }
+
+
+        /* =========================
+           FEATURES
+        ========================= */
+
+        .section {
+            padding: 110px 5%;
+        }
+
+        .section-head {
+            text-align: center;
+            margin-bottom: 45px;
+        }
+
+        .section-head h2 {
+            font-size: 42px;
+        }
+
+        .feature-grid {
+            max-width: 1150px;
+            margin: auto;
+
+            display: grid;
+            grid-template-columns:
+                repeat(3, 1fr);
+
+            gap: 18px;
+        }
+
+        .feature {
+            padding: 25px;
+
+            background: #111;
+
+            border: 1px solid #252525;
+            border-radius: 22px;
+        }
+
+        .feature:hover {
+            transform: translateY(-7px);
+            border-color: var(--gold);
+        }
+
+        .feature p {
+            color: #888;
+            line-height: 1.6;
+        }
+
+
+        /* =========================
+           HISTORY
+        ========================= */
+
+        .history {
+            display: grid;
+            gap: 8px;
+
+            max-height: 360px;
+
+            overflow-y: auto;
+        }
+
+        .history-item {
+            display: flex;
+            justify-content: space-between;
+
+            padding: 12px;
+
+            background: #151515;
+
+            border-left: 3px solid var(--gold);
+            border-radius: 12px;
+        }
+
+        .history-item b {
+            color: var(--gold2);
+        }
+
+
+        /* =========================
+           RESPONSIVE
+        ========================= */
+
+        @media(max-width: 1000px) {
+
+            .hero {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .feature-grid {
+                grid-template-columns:
+                    repeat(2, 1fr);
+            }
+        }
+
+        @media(max-width: 650px) {
+
+            .nav-links {
+                display: none;
+            }
+
+            .hero h1 {
+                font-size: 55px;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .calculator-scene {
+                transform: scale(.82);
+            }
+        }
+
+    </style>
+</head>
+
+
+<body>
+
+    <!-- =========================
+         LOGIN
+    ========================= -->
+
+    <div class="login" id="login">
+
+        <div class="login-card">
+
+            <div class="logo">
+                Calc<span>Nova</span>
+            </div>
+
+            <p>Master 3D Calculator</p>
+
+            <input
+                class="field"
+                id="username"
+                type="text"
+                placeholder="Username"
+            >
+
+            <input
+                class="field"
+                id="password"
+                type="password"
+                placeholder="Password"
+            >
+
+            <button
+                class="gold-btn"
+                onclick="loginUser()"
+            >
+                Login
+            </button>
+
+            <p id="loginMsg"></p>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         NAVIGATION
+    ========================= -->
+
+    <nav class="nav">
+
+        <div class="logo">
+            Calc<span>Nova</span>
+        </div>
+
+        <div class="nav-links">
+
+            <a href="#home">Home</a>
+            <a href="#features">Features</a>
+            <a href="#history">History</a>
+
+        </div>
+
+    </nav>
+
+
+    <!-- =========================
+         HERO
+    ========================= -->
+
+    <section class="hero" id="home">
+
+        <div>
+
+            <div class="eyebrow">
+                NEXT GENERATION CALCULATOR
+            </div>
+
+            <h1>
+                Calc<span>Nova</span>
+            </h1>
+
+            <h2>
+                Master 3D Calculator
+            </h2>
+
+            <p>
+                A modern calculator with a realistic
+                3D interface, calculation history and
+                interactive controls.
+            </p>
+
+        </div>
+
+
+        <!-- 3D Calculator -->
+
+        <div class="calculator-scene">
+
+            <div class="calc-wrap" id="calculator">
+
+                <div class="calc-face">
+
+                    <!-- Display -->
+
+                    <div class="screen">
+
+                        <div
+                            class="screen-value"
+                            id="display"
+                        >
+                            0
+                        </div>
+
+                    </div>
+
+
+                    <!-- Buttons -->
+
+                    <div class="key-grid">
+
+                        <button
+                            class="key"
+                            onclick="clearCalc()"
+                        >
+                            AC
+                        </button>
+
+                        <button
+                            class="key"
+                            onclick="backspace()"
+                        >
+                            DEL
+                        </button>
+
+                        <button
+                            class="key"
+                            onclick="percent()"
+                        >
+                            %
+                        </button>
+
+                        <button
+                            class="key op"
+                            onclick="choose('/')"
+                        >
+                            ÷
+                        </button>
+
+
+                        <button
+                            class="key"
+                            onclick="num('7')"
+                        >
+                            7
+                        </button>
+
+                        <button
+                            class="key"
+                            onclick="num('8')"
+                        >
+                            8
+                        </button>
+
+                        <button
+                            class="key"
+                            onclick="num('9')"
+                        >
+                            9
+                        </button>
+
+                        <button
+                            class="key op"
+                            onclick="choose('*')"
+                        >
+                            ×
+                        </button>
+
+
+                        <button
+                            class="key"
+                            onclick="num('4')"
+                        >
+                            4
+                        </button>
+
+                        <button
+                            class="key"
+                            onclick="num('5')"
+                        >
+                            5
+                        </button>
+
+                        <button
+                            class="key"
+                            onclick="num('6')"
+                        >
+                            6
+                        </button>
+
+                        <button
+                            class="key op"
+                            onclick="choose('-')"
+                        >
+                            −
+                        </button>
+
+
+                        <button
+                            class="key"
+                            onclick="num('1')"
+                        >
+                            1
+                        </button>
+
+                        <button
+                            class="key"
+                            onclick="num('2')"
+                        >
+                            2
+                        </button>
+
+                        <button
+                            class="key"
+                            onclick="num('3')"
+                        >
+                            3
+                        </button>
+
+                        <button
+                            class="key op"
+                            onclick="choose('+')"
+                        >
+                            +
+                        </button>
+
+
+                        <button
+                            class="key wide"
+                            onclick="num('0')"
+                        >
+                            0
+                        </button>
+
+                        <button
+                            class="key"
+                            onclick="num('.')"
+                        >
+                            .
+                        </button>
+
+                        <button
+                            class="key equal"
+                            onclick="equals()"
+                        >
+                            =
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================
+         FEATURES
+    ========================= -->
+
+    <section
+        class="section"
+        id="features"
+    >
+
+        <div class="section-head">
+
+            <div class="eyebrow">
+                FEATURES
+            </div>
+
+            <h2>
+                Everything Users Need
+            </h2>
+
+        </div>
+
+
+        <div class="feature-grid">
+
+            <div class="feature">
+                <h3>🎯 Fast Calculation</h3>
+                <p>
+                    Perform basic arithmetic
+                    operations quickly.
+                </p>
+            </div>
+
+            <div class="feature">
+                <h3>🎨 3D Design</h3>
+                <p>
+                    Interactive 3D calculator
+                    interface.
+                </p>
+            </div>
+
+            <div class="feature">
+                <h3>💾 History</h3>
+                <p>
+                    Previous calculations can
+                    be stored in the browser.
+                </p>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================
+         HISTORY
+    ========================= -->
+
+    <section
+        class="section"
+        id="history"
+    >
+
+        <div class="section-head">
+
+            <div class="eyebrow">
+                CALCULATION HISTORY
+            </div>
+
+            <h2>
+                Your Calculations
+            </h2>
+
+        </div>
+
+        <div
+            class="history"
+            id="historyList"
+        ></div>
+
+    </section>
+
+
+    <!-- =========================
+         JAVASCRIPT
+    ========================= -->
+
+    <script>
+
+        let current = "0";
+
+        let firstValue = null;
+
+        let operator = null;
+
+        let waitingForNumber = false;
+
+        let justCalculated = false;
+
+
+        const display =
+            document.getElementById("display");
+
+
+        /* =========================
+           DISPLAY
+        ========================= */
+
+        function showDisplay() {
+
+            display.textContent = current;
+
+        }
+
+
+        /* =========================
+           NUMBER BUTTON
+        ========================= */
+
+        function num(value) {
+
+            if (
+                waitingForNumber ||
+                justCalculated
+            ) {
+
+                current = value;
+
+                waitingForNumber = false;
+
+                justCalculated = false;
+
+                showDisplay();
+
+                return;
+            }
+
+
+            if (
+                value === "." &&
+                current.includes(".")
+            ) {
+                return;
+            }
+
+
+            if (
+                current === "0" &&
+                value !== "."
+            ) {
+
+                current = value;
+
+            } else {
+
+                current += value;
+
+            }
+
+
+            showDisplay();
+
+        }
+
+
+        /* =========================
+           OPERATOR
+        ========================= */
+
+        function choose(nextOperator) {
+
+            const value =
+                Number(current);
+
+
+            if (
+                operator !== null &&
+                !waitingForNumber
+            ) {
+
+                const result =
+                    calculate(
+                        firstValue,
+                        value,
+                        operator
+                    );
+
+                current =
+                    String(result);
+
+                firstValue = result;
+
+                showDisplay();
+
+            } else {
+
+                firstValue = value;
+
+            }
+
+
+            operator =
+                nextOperator;
+
+            waitingForNumber = true;
+
+        }
+
+
+        /* =========================
+           CALCULATIONS
+        ========================= */
+
+        function calculate(a, b, op) {
+
+            switch(op) {
+
+                case "+":
+                    return a + b;
+
+                case "-":
+                    return a - b;
+
+                case "*":
+                    return a * b;
+
+                case "/":
+
+                    if (b === 0) {
+                        return null;
+                    }
+
+                    return a / b;
+
+                default:
+                    return b;
+            }
+
+        }
+
+
+        /* =========================
+           EQUAL
+        ========================= */
+
+        function equals() {
+
+            if (
+                operator === null ||
+                firstValue === null
+            ) {
+                return;
+            }
+
+
+            const b =
+                Number(current);
+
+
+            const result =
+                calculate(
+                    firstValue,
+                    b,
+                    operator
+                );
+
+
+            if (result === null) {
+
+                current = "Error";
+
+                showDisplay();
+
+                return;
+            }
+
+
+            current =
+                String(result);
+
+
+            saveHistory(
+                firstValue +
+                " " +
+                operator +
+                " " +
+                b,
+                current
+            );
+
+
+            firstValue = null;
+
+            operator = null;
+
+            waitingForNumber = false;
+
+            justCalculated = true;
+
+
+            showDisplay();
+
+        }
+
+
+        /* =========================
+           CLEAR
+        ========================= */
+
+        function clearCalc() {
+
+            current = "0";
+
+            firstValue = null;
+
+            operator = null;
+
+            waitingForNumber = false;
+
+            justCalculated = false;
+
+            showDisplay();
+
+        }
+
+
+        /* =========================
+           DELETE
+        ========================= */
+
+        function backspace() {
+
+            if (current.length > 1) {
+
+                current =
+                    current.slice(0, -1);
+
+            } else {
+
+                current = "0";
+
+            }
+
+            showDisplay();
+
+        }
+
+
+        /* =========================
+           PERCENTAGE
+        ========================= */
+
+        function percent() {
+
+            current =
+                String(
+                    Number(current) / 100
+                );
+
+            showDisplay();
+
+        }
+
+
+        /* =========================
+           HISTORY
+        ========================= */
+
+        let history = [];
+
+
+        function saveHistory(
+            expression,
+            result
+        ) {
+
+            history.unshift({
+
+                expression: expression,
+
+                result: result,
+
+                time:
+                    new Date()
+                    .toLocaleTimeString()
+
+            });
+
+
+            history =
+                history.slice(0, 20);
+
+
+            localStorage.setItem(
+                "calcNovaHistory",
+                JSON.stringify(history)
+            );
+
+
+            renderHistory();
+
+        }
+
+
+        function renderHistory() {
+
+            const box =
+                document.getElementById(
+                    "historyList"
+                );
+
+
+            if (!history.length) {
+
+                box.innerHTML =
+                    "No calculations yet.";
+
+                return;
+
+            }
+
+
+            box.innerHTML =
+                history.map(item => {
+
+                    return `
+                        <div class="history-item">
+
+                            <div>
+                                <small>
+                                    ${item.time}
+                                </small>
+
+                                <br>
+
+                                ${item.expression}
+                            </div>
+
+                            <b>
+                                = ${item.result}
+                            </b>
+
+                        </div>
+                    `;
+
+                }).join("");
+
+        }
+
+
+        /* =========================
+           LOGIN
+        ========================= */
+
+        function loginUser() {
+
+            const username =
+                document.getElementById(
+                    "username"
+                ).value;
+
+            const password =
+                document.getElementById(
+                    "password"
+                ).value;
+
+
+            if (
+                username !== "" &&
+                password !== ""
+            ) {
+
+                document.getElementById(
+                    "login"
+                ).style.display = "none";
+
+            } else {
+
+                document.getElementById(
+                    "loginMsg"
+                ).textContent =
+                    "Please enter username and password.";
+
+            }
+
+        }
+
+
+        /* =========================
+           LOAD HISTORY
+        ========================= */
+
+        const savedHistory =
+            localStorage.getItem(
+                "calcNovaHistory"
+            );
+
+
+        if (savedHistory) {
+
+            history =
+                JSON.parse(savedHistory);
+
+        }
+
+
+        renderHistory();
+
+    </script>
+
+</body>
+
+</html>
